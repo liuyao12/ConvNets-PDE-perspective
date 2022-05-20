@@ -29,7 +29,7 @@ the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, t
 
 ![](./translation.gif)
 
-In fact, with multiple channels this is technically a system of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. The connection may be summarized in the form of a table:
+In fact, with multiple channels this is technically a *system* of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. The connection may be summarized in the form of a table:
 
 Convolutional Neural Nets | Partial Differential Equations
 :----:|:-------:
@@ -43,7 +43,7 @@ boundary handling <br> (padding) | boundary condition
 multiple channels <br> [e.g. 16×16×3×3 kernel; <br> 16×16×1×1 kernel] | system of (coupled) PDEs <br> [16×16 matrix of differential operators; <br> 16×16 matrix of constants]
 groups (=g) | matrix is block-diagonal (direct sum of g blocks)
 
-The training of a ConvNet would be an **inverse problem**: we know the solutions (dataset), and look for the PDE that would yield those solutions. On the grand scheme of things, it is part of the **continuous formulation** of deep neural nets, which supplements the more traditional "statistical learning" interpretation. If you thought the curse of dimensionality was bad enough, you might find relief in optimization over an *infinite-dimensional* space, aka the *calculus of variations*. (I have very little to say about backpropagation, and will focus on the "feed forward" of ConvNets.)
+The training of a ConvNet would be an **inverse problem**: we know the solutions (dataset), and look for the PDE that would yield those solutions. On the grand scheme of things, it is part of the **continuous formulation** of deep neural nets, which supplements the more traditional "statistical learning" interpretation. If you thought the curse of dimensionality was bad enough, you might find relief in optimization over an *infinite*-dimensional space, aka the *calculus of variations*. (I have very little to say about backpropagation, and will focus on the "feed forward" of ConvNets.)
 
 If you think about it, a full 3x3 conv from (say) 64 channels to 64 channels is rather wasteful, for there can only be at most 9 different kernels (or rather, 9 linearly independent kernels). One way to address this is to take each of the 64 channels, convolve with 9 different kernels, and take linear combinations; in other words, 64 channels go into 64x9 channels (with groups=64), followed by a 1x1 conv. This is awkwardly named "depthwise separable convolution".
 
@@ -57,7 +57,7 @@ What I'm saying is that the perspective of PDE can get you quite a lot of the de
 
 1. In such PDEs, one always needs to impose a *boundary condition* (BC), which is simply padding in conv. It seems that only "padding with 0" (Dirichlet BC) is ever used. One could instead try to implement the Neumann BC (by using `padding_mode="reflect"`), which could make traveling waves bounce back and thereby retain more information.
 
-1. One special type of PDEs, called **symmetric hyperbolic systems** (Maxwell and Dirac equations are prominent linear examples), would be interesting to implement. Or instead, we could help make the ConvNet more "hyperbolic" by putting a suitable regularization term in the loss function.
+1. One special type of PDEs, called **symmetric hyperbolic systems** (Maxwell and Dirac equations are prominent *linear* examples), would be interesting to implement. Or instead, we could help make the ConvNet more "hyperbolic" by putting a suitable regularization term in the loss function.
 
 1. The PDEs here are all "constant coefficients" (i.e., the coefficients are constant in the x and y variables, but do vary in t). What if we make them vary in x and y as well? That is, after the standard 3x3 conv, multiply the result by the "coordinate function" of the form $ax+by+c$. Taking the latest torchvision code for ResNet, here are the relevant changes that can be made (easily adaptable to other ConvNets):
 
@@ -141,7 +141,7 @@ One could motivate the addition of variable coefficients as enabling the ConvNet
 
 I hope someone with resources can put this to more thorough tests on ImageNet, and share the results. It seems that only with solid results will it convince more people to take this perspective seriously.
 
-I'd bet that Yann LeCun did understand PDEs well when he introduced the ConvNet, but purposefully framed it in terms of convolutions. It's a bit unfortunate that, without the guide of PDE, the field had missed many opportunities to improve the architecture design, or did so with ad hoc reasoning. The first to note the connection between ResNet and differential equations or dynamical systems is perhaps Weinan E, an applied mathematician from Princeton. The Neural ODE paper also starts out from the same observation, but it treats each pixel as a dynamical variable (hence ODE), interacting with its immediate neighbors; it's more natural to speak of PDEs, if somewhat limited to ConvNets, so that both the depth (t) and the image dimensions (x, y) are continuous. To this day, the PDE perspective is still not widely adopted among mainstream AI researchers; see, for example, A ConvNet for the 2020s. The mathematics isn't complicated; I recommend 3blue1brown's excellent 2-part introduction, focusing on the heat equation. 
+I'd bet that Yann LeCun did understand PDEs well when he introduced the ConvNet, but purposefully framed it in terms of convolutions. It's a bit unfortunate that, without the guide of PDE, the field had missed many opportunities to improve the architecture design, or did so with ad hoc reasoning. The first to note the connection between ResNet and differential equations or dynamical systems is perhaps Weinan E, an applied mathematician from Princeton. The Neural ODE paper also starts out from the same observation, but it treats each pixel as a dynamical variable (hence ODE), interacting with its immediate neighbors; it's more natural to speak of PDEs, if somewhat limited to ConvNets, so that both the depth (t) and the image dimensions (x, y) become continuous. To this day, the PDE perspective is still not widely adopted among mainstream AI researchers; see, for example, A ConvNet for the 2020s. The mathematics isn't complicated; I recommend 3blue1brown's excellent 2-part introduction, focusing on the heat equation. 
 
 https://youtu.be/ly4S0oi3Yz8
 
