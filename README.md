@@ -1,8 +1,8 @@
 # ConvNets from the PDE perspective
 
---This started as a response to ConvNext. In my opinion, if anything could be called the "ConvNets of the 2020s", it'd be those that are designed from the PDE perspective. Anyone is invited to open a discussion, to ask for clarification, suggest and develop new ideas, a la the Polymath project.
+----*This started as a response to ConvNext, first on Twitter, then on Weights & Biases. In my opinion, if anything could be called the "ConvNets of the 2020s", it'd be those that are designed from the PDE perspective. Everyone is invited to open a discussion, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.*
 
-The 3x3 conv can be seen as a differential operator (of order ≤2): the so-called Sobel filters are partial derivatives in the x- and y-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
+The 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the x- and y-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
 $$
 \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1\end{bmatrix} \sim \frac{\partial}{\partial x}
@@ -12,7 +12,7 @@ $$
 \frac{1}{16}\begin{bmatrix}1&2&1\\2&4&2\\1&2&1\end{bmatrix} \sim 1+\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}
 $$
 
-By compounding multiple layers of 3x3 conv, with "identity skip connections" (ResNet), you are effectively solving a partial differential equation, numerically.
+By compounding multiple layers of 3x3 conv, with "identity skip connections" (ResNet), you are effectively solving a **partial differential equation**, *numerically*.
 
 $$
 \displaystyle \frac{\partial u}{\partial t} = \sigma (Lu), \quad L= \alpha + \beta \frac{\partial}{\partial x} + \gamma \frac{\partial}{\partial y} + \delta\frac{\partial^2}{\partial x\partial y} +\cdots
@@ -39,7 +39,7 @@ boundary handling <br> (padding) | boundary condition
 multiple channels <br> [e.g. 16×16×3×3 kernel; <br> 16×16×1×1 kernel] | system of (coupled) PDEs <br> [16×16 matrix of differential operators; <br> 16×16 matrix of constants]
 groups (=g) | matrix is block-diagonal (direct sum of g blocks)
 
-The training of a ConvNet would be an inverse problem: we know the solutions (dataset), and look for the PDE that would yield those solutions. On the grand scheme of things, it is part of the continuous formulation of deep neural nets, which supplements the more traditional "statistical learning" interpretation. If you thought the curse of dimensionality was bad enough, you might find relief in optimization over an infinite-dimensional space, aka the calculus of variations. (I have very little to say about backpropagation, and will focus on the "feed forward" of ConvNets.)
+The training of a ConvNet would be an **inverse problem**: we know the solutions (dataset), and look for the PDE that would yield those solutions. On the grand scheme of things, it is part of the **continuous formulation** of deep neural nets, which supplements the more traditional "statistical learning" interpretation. If you thought the curse of dimensionality was bad enough, you might find relief in optimization over an *infinite-dimensional* space, aka the *calculus of variations*. (I have very little to say about backpropagation, and will focus on the "feed forward" of ConvNets.)
 
 
 
@@ -55,13 +55,11 @@ What I'm saying is that the perspective of PDE can get you quite a lot of the de
 
 1. In such PDEs, one always needs to impose a boundary condition (BC), which is simply padding in conv. It seems that only the padding with 0 (Dirichlet BC) is ever used. One could instead try to implement the Neumann BC (by using `padding_mode="reflect"`), which could make traveling waves bounce back and thereby retain more information.
 
-1. One special type of PDEs, called symmetric hyperbolic systems (Maxwell and Dirac equations are prominent linear examples), would be interesting to implement. Or instead, we could help make the ConvNet more "hyperbolic" by putting a suitable regularization term in the loss function.
+1. One special type of PDEs, called **symmetric hyperbolic systems** (Maxwell and Dirac equations are prominent linear examples), would be interesting to implement. Or instead, we could help make the ConvNet more "hyperbolic" by putting a suitable regularization term in the loss function.
 
 1.The PDEs here are all "constant coefficients" (i.e., the coefficients are constant in the x and y variables, but do vary in t). What if we make them vary in x and y as well? That is, after the standard 3x3 conv, multiply the result by the "coordinate function" of the form $ax+by+c$. Taking the latest torchvision code for ResNet, here are the relevant changes that can be made (easily adaptable to other ConvNets):
 
 ``` python
-
-
 
 class Bottleneck(nn.Module):
     # Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
