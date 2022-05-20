@@ -137,7 +137,7 @@ class Bottleneck(nn.Module):
 
 One could motivate the addition of variable coefficients as enabling the ConvNet to learn to *rotate* and *scale* the image, just like how the Sobel can shift the image, but by different amounts for different parts of the image. But whether or not it actually *learns* these transformations is not guaranteed, nor easy to verify. At any rate, a better explanation may be that it at least expands the "expressive power" of the network.
 
-![](https://github.com/liuyao12/ConvNets-PDE-perspective/rotation.gif) ![](https://github.com/liuyao12/ConvNets-PDE-perspective/dilation.gif)
+![](rotation.gif) ![](dilation.gif)
 
 I hope someone with resources can put this to more thorough tests on ImageNet, and share the results. It seems that only with solid results will it convince more people to take this perspective seriously.
 
