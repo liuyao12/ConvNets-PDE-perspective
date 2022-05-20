@@ -1,6 +1,6 @@
 # ConvNets from the PDE perspective
 
-----*This started as a response to ConvNext, first on Twitter, then on Weights & Biases. In my opinion, if anything could be called the "ConvNets of the 2020s", it'd be those that are designed from the PDE perspective. Everyone is invited to **open a discussion**, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.*
+	----*This started as a response to ConvNext, first on Twitter, then on Weights & Biases. If anything could be called the "ConvNets of the 2020s", it'd be, in my opinion, those that are designed from the PDE perspective. Everyone is invited to **open a discussion**, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.*
 
 The 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the x- and y-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
@@ -9,7 +9,7 @@ $$
 $$ 
 
 $$
-\frac{1}{16}\begin{bmatrix}1&2&1\\2&4&2\\1&2&1\end{bmatrix} \sim 1+\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}
+\frac{1}{16}\begin{bmatrix}1 & 2 & 1 \\ 2 & 4 & 2 \\ 1 & 2 & 1 \end{bmatrix} \sim 1+\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}
 $$
 
 By compounding multiple layers of 3x3 conv, with "identity skip connections" (ResNet), you are effectively solving a **partial differential equation**, *numerically*.
@@ -24,7 +24,7 @@ $$
 u_{n+1} = u_n+ \sigma (L u_n) \cdot \Delta t
 $$
 
-the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a nonlinear PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel can "shift" the image in one direction, at a rate of one pixel per layer.
+the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a *nonlinear* PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel can "shift" the image in one direction, at a rate of one pixel per layer.
 
 In fact, with multiple channels this is technically a system of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. The connection may be summarized in the form of a table:
 
@@ -54,11 +54,11 @@ block is a lot like the Bottleneck block in ResNet. (I don't have a good intuiti
 
 What I'm saying is that the perspective of PDE can get you quite a lot of the design of the modern ConvNets — consisting almost entirely of 3x3 and 1x1, with skip connections — more naturally and more directly. Moreover, it suggests other ways of tweaking the architecture:
 
-1. In such PDEs, one always needs to impose a boundary condition (BC), which is simply padding in conv. It seems that only the padding with 0 (Dirichlet BC) is ever used. One could instead try to implement the Neumann BC (by using `padding_mode="reflect"`), which could make traveling waves bounce back and thereby retain more information.
+1. In such PDEs, one always needs to impose a *boundary condition* (BC), which is simply padding in conv. It seems that only "padding with 0" (Dirichlet BC) is ever used. One could instead try to implement the Neumann BC (by using `padding_mode="reflect"`), which could make traveling waves bounce back and thereby retain more information.
 
 1. One special type of PDEs, called **symmetric hyperbolic systems** (Maxwell and Dirac equations are prominent linear examples), would be interesting to implement. Or instead, we could help make the ConvNet more "hyperbolic" by putting a suitable regularization term in the loss function.
 
-1.The PDEs here are all "constant coefficients" (i.e., the coefficients are constant in the x and y variables, but do vary in t). What if we make them vary in x and y as well? That is, after the standard 3x3 conv, multiply the result by the "coordinate function" of the form $ax+by+c$. Taking the latest torchvision code for ResNet, here are the relevant changes that can be made (easily adaptable to other ConvNets):
+1. The PDEs here are all "constant coefficients" (i.e., the coefficients are constant in the x and y variables, but do vary in t). What if we make them vary in x and y as well? That is, after the standard 3x3 conv, multiply the result by the "coordinate function" of the form $ax+by+c$. Taking the latest torchvision code for ResNet, here are the relevant changes that can be made (easily adaptable to other ConvNets):
 
 ``` python
 
@@ -142,6 +142,7 @@ class Bottleneck(nn.Module):
         return out
 
 ```
+
 One could motivate the addition of variable coefficients as enabling the ConvNet to learn to *rotate* and *scale* the image, just like how the Sobel can shift the image, but by different amounts for different parts of the image. But whether or not it actually *learns* these transformations is not guaranteed, nor easy to verify. At any rate, a better explanation may be that it at least expands the "expressive power" of the network.
 
 I hope someone with resources can put this to more thorough tests on ImageNet, and share the results. It seems that only with solid results will it convince more people to take this perspective seriously.
