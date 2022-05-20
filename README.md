@@ -22,3 +22,37 @@ $$
 u_{n+1} = u_n+ \sigma (L u_n) \cdot \Delta t
 $$
 the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a nonlinear PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel can "shift" the image in one direction, at a rate of one pixel per layer.
+
+In fact, with multiple channels this is technically a system of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. The connection may be summarized in the form of a table:
+
+Convolutional Neural Nets | Partial Differential Equations
+:----:|:-------:
+input layer | initial condition
+feed forward | solving the equation numerically
+hidden layers | solution at intermediate times
+output (penultimate) layer | solution at final time
+**convolution** with 3×3 kernel | **differential operator** of order ≤ 2
+weights | coefficients
+boundary handling <br> (padding) | boundary condition
+multiple channels <br> [e.g. 16×16×3×3 kernel; <br> 16×16×1×1 kernel] | system of (coupled) PDEs <br> [16×16 matrix of differential operators; <br> 16×16 matrix of constants]
+groups (=g) | matrix is block-diagonal (direct sum of g blocks)
+
+The training of a ConvNet would be an inverse problem: we know the solutions (dataset), and look for the PDE that would yield those solutions. On the grand scheme of things, it is part of the continuous formulation of deep neural nets, which supplements the more traditional "statistical learning" interpretation. If you thought the curse of dimensionality was bad enough, you might find relief in optimization over an infinite-dimensional space, aka the calculus of variations. (I have very little to say about backpropagation, and will focus on the "feed forward" of ConvNets.)
+
+
+
+If you think about it, a full 3x3 conv from (say) 64 channels to 64 channels is rather wasteful, for there can only be at most 9 different kernels (or rather, 9 linearly independent kernels). One way to address this is to take each of the 64 channels, convolve with 9 different kernels, and take linear combinations; in other words, 64 channels go into 64x9 channels (with groups=64), followed by a 1x1 conv. This is awkwardly named "depthwise separable convolution".
+
+In fact, doing x9 is also rather wasteful, for the space of second-order differential operators is 6 or perhaps 5 dimensional, so I'd go with x4. That x1 already works so well (in MobileNet, etc.) is kind of surprising. Now, the
+
+	64 --(3x3, groups=64) --> 64x4 --(1x1)--> 64
+
+block is a lot like the Bottleneck block in ResNet. (I don't have a good intuition with the placement of the extra 1x1.)
+
+What I'm saying is that the perspective of PDE can get you quite a lot of the design of the modern ConvNets — consisting almost entirely of 3x3 and 1x1, with skip connections — more naturally and more directly. Moreover, it suggests other ways of tweaking the architecture:
+
+1. In such PDEs, one always needs to impose a boundary condition (BC), which is simply padding in conv. It seems that only the padding with 0 (Dirichlet BC) is ever used. One could instead try to implement the Neumann BC (by using `padding_mode="reflect"`), which could make traveling waves bounce back and thereby retain more information.
+
+1. One special type of PDEs, called symmetric hyperbolic systems (Maxwell and Dirac equations are prominent linear examples), would be interesting to implement. Or instead, we could help make the ConvNet more "hyperbolic" by putting a suitable regularization term in the loss function.
+
+1.The PDEs here are all "constant coefficients" (i.e., the coefficients are constant in the x and y variables, but do vary in t). What if we make them vary in x and y as well? That is, after the standard 3x3 conv, multiply the result by the "coordinate function" of the form $ax+by+c$. Taking the latest torchvision code for ResNet, here are the relevant changes that can be made (easily adaptable to other ConvNets):
