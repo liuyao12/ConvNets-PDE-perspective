@@ -27,7 +27,7 @@ $$
 
 the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a *nonlinear* PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel can "shift" the image in one direction, at a rate of one pixel per layer.
 
-![](https://github.com/liuyao12/ConvNets-PDE-perspective/blob/0cf31b318ff7e15488455b9f94e0508052bd4e38/translation.gif)
+![translation](translation.gif)
 
 In fact, with multiple channels this is technically a *system* of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. The connection may be summarized in the form of a table:
 
