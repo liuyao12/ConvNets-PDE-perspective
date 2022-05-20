@@ -27,7 +27,7 @@ $$
 
 the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a *nonlinear* PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel can "shift" the image in one direction, at a rate of one pixel per layer.
 
-![](translation.gif)
+![](https://github.com/liuyao12/ConvNets-PDE-perspective/translation.gif)
 
 In fact, with multiple channels this is technically a *system* of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. The connection may be summarized in the form of a table:
 
@@ -137,11 +137,11 @@ class Bottleneck(nn.Module):
 
 One could motivate the addition of variable coefficients as enabling the ConvNet to learn to *rotate* and *scale* the image, just like how the Sobel can shift the image, but by different amounts for different parts of the image. But whether or not it actually *learns* these transformations is not guaranteed, nor easy to verify. At any rate, a better explanation may be that it at least expands the "expressive power" of the network.
 
-![](rotation.gif) ![](dilation.gif)
+![](https://github.com/liuyao12/ConvNets-PDE-perspective/rotation.gif) ![](https://github.com/liuyao12/ConvNets-PDE-perspective/dilation.gif)
 
 I hope someone with resources can put this to more thorough tests on ImageNet, and share the results. It seems that only with solid results will it convince more people to take this perspective seriously.
 
-I'd bet that Yann LeCun did understand PDEs well when he introduced the ConvNet, but purposefully framed it in terms of convolutions. It's a bit unfortunate that, without the guide of PDE, the field had missed many opportunities to improve the architecture design, or did so with ad hoc reasoning. The first to note the connection between ResNet and differential equations or dynamical systems is perhaps Weinan E, an applied mathematician from Princeton. The Neural ODE paper also starts out from the same observation, but it treats each pixel as a dynamical variable (hence ODE), interacting with its immediate neighbors; it's more natural to speak of PDEs, if somewhat limited to ConvNets, so that both the depth (t) and the image dimensions (x, y) become continuous. To this day, the PDE perspective is still not widely adopted among mainstream AI researchers; see, for example, [A ConvNet for the 2020s](https://github.com/facebookresearch/ConvNeXt). The mathematics isn't complicated; I recommend 3blue1brown's excellent 2-part introduction, focusing on the heat equation. 
+I'd bet that Yann LeCun did understand PDEs well when he introduced the first ConvNet, but purposefully framed it in terms of convolutions. It's a bit unfortunate that, without the guide of PDE, the field had missed many opportunities to improve the architecture design, or did so with ad hoc reasoning. The first to note the connection between ResNet and differential equations or dynamical systems is perhaps Weinan E, an applied mathematician from Princeton. The Neural ODE paper also starts out from the same observation, but it treats each pixel as a dynamical variable (hence ODE), interacting with its immediate neighbors; it's more natural to speak of PDEs, if somewhat limited to ConvNets, so that both the depth (t) and the image dimensions (x, y) become continuous. To this day, the PDE perspective is still not widely adopted among mainstream AI researchers; see, for example, [A ConvNet for the 2020s](https://github.com/facebookresearch/ConvNeXt). The mathematics isn't complicated; I recommend 3blue1brown's excellent 2-part introduction, focusing on the heat equation. 
 
 https://youtu.be/ly4S0oi3Yz8
 
