@@ -1,7 +1,7 @@
 # ConvNets from the PDE perspective
 
 * This started out as a response to ConvNext, first posted on Twitter, then expanded on Weights & Biases. In my (biased) opinion, if anything could be called the "ConvNets of the 2020s", it would be those that are designed from the PDE perspective. 
-* Everyone is invited to **open a discussion**, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.
+* Everyone is invited to **open a discussion**, to offer criticisms, ask for clarification, suggest and develop new ideas and experiments, a la the Polymath project; and to PR any code and results that you would like to share.
 
 The 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the x- and y-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
