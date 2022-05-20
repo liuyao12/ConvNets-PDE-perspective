@@ -3,7 +3,7 @@
 * This started out as a response to [ConvNext](https://github.com/facebookresearch/ConvNeXt), first as a Twitter thread, then expanded on Weights & Biases. In my (biased) opinion, if anything could be called the "ConvNets of the 2020s", it would be those that are designed from the PDE perspective. 
 * Everyone is invited to **open a discussion**, to offer criticisms, ask for clarification, suggest and develop new ideas and experiments, a la the Polymath projects; and of course to PR any code and results that you would like to share. The hope is to get researchers from all over the world to collaborate, to move the field forward, without the inefficient cycle of published papers that repeat many of the same things over. Unlike the Polymath projects, there doesn't appear to be a clearly defined goal.
 
-The 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the x- and y-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
+The 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the $x$- and $y$-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
 $$
 \begin{bmatrix} -1 & 0 & 1 \\\\ -2 & 0 & 2 \\\\ -1 & 0 & 1\end{bmatrix} \sim \frac{\partial}{\partial x}
@@ -45,7 +45,7 @@ groups (=g) | matrix is block-diagonal (direct sum of g blocks)
 
 The training of a ConvNet would be an **inverse problem**: we know the solutions (dataset), and look for the PDE that would yield those solutions. On the grand scheme of things, it is part of the **continuous formulation** of deep neural nets, which supplements the more traditional "statistical learning" interpretation. If you thought the curse of dimensionality was bad enough, you might find relief in optimization over an *infinite*-dimensional space, aka the *calculus of variations*. (I have very little to say about backpropagation, and will focus on the "feed forward" of ConvNets.)
 
-If you think about it, a full 3x3 conv from (say) 64 channels to 64 channels is rather wasteful, for there can only be at most 9 different kernels (or rather, 9 linearly independent kernels). One way to address this is to take each of the 64 channels, convolve with 9 different kernels, and take linear combinations; in other words, 64 channels go into 64x9 channels (with groups=64), followed by a 1x1 conv. This is awkwardly named "depthwise separable convolution".
+If you think about it, a full 3x3 conv from (say) 64 channels to 64 channels is rather wasteful, for there can only be at most 9 different kernels (or rather, 9 linearly independent kernels). One way to address this is to take each of the 64 channels, convolve with 9 different kernels, and take linear combinations; in other words, 64 channels go into 64x9 channels (3x3 with groups=64), followed by a 1x1 conv. This is awkwardly named "depthwise separable convolution".
 
 In fact, doing x9 is also rather wasteful, for the space of second-order differential operators is 6 or perhaps 5 dimensional, so I'd go with x4. That x1 already works so well (in MobileNet, etc.) is kind of surprising. Now, the
 
@@ -59,7 +59,7 @@ What I'm saying is that the perspective of PDE can get you quite a lot of the de
 
 1. One special type of PDEs, called **symmetric hyperbolic systems** (Maxwell and Dirac equations are prominent *linear* examples), would be interesting to implement. Or instead, we could help make the ConvNet more "hyperbolic" by putting a suitable regularization term in the loss function.
 
-1. The PDEs here are all "constant coefficients" (i.e., the coefficients are constant in the x and y variables, but do vary in t). What if we make them vary in x and y as well? That is, after the standard 3x3 conv, multiply the result by the "coordinate function" of the form $ax+by+c$. Taking the latest torchvision code for ResNet, here are the relevant changes that can be made (easily adaptable to other ConvNets):
+1. The PDEs here are all "constant coefficients" (i.e., the coefficients are constant in the $x$ and $y$ variables, but do vary in $t$). What if we make them vary in $x$ and $y$ as well? That is, after the standard 3x3 conv, multiply the result by the "coordinate function" of the form $ax+by+c$. Taking the latest torchvision code for ResNet, here are the relevant changes that can be made (easily adaptable to other ConvNets):
 
 ``` python
 
@@ -148,13 +148,13 @@ https://youtu.be/ly4S0oi3Yz8
 Last but not least, the PDE or dynamical systems perspective points to a partial answer (though somewhat useless one) to the problem of interpretability. The "hypothesis space" is now a class of PDEs that seems to be rich enough for traces of *integrability within chaos* — analogous to the long-term stability and predictability of the solar system, despite the fact that the three-body problem is chaotic — and that gradient descent is somehow quite effective in finding them.
 
 ## Appendix
-One thing that might be hard to find in a PDE course is how repeated *local* operations (first-order differential operators) give rise to a *global* transformation. This is "well known", but under different names in different areas: infinitesimal generator and the exponential map (Lie group/Lie algebra), semigroup of unbounded operators (functional analysis), the method of characteristics (linear PDEs), flow of a vector field (differential geometry), and even "observables" or self-adjoint operators in quantum mechanics. The simplest way to understand it is by way of the exponential — the master key for solving *any* linear differential equation — of $\frac{d}{dx}$ (in one dimension)
+One thing that might be hard to find in a PDE course is how repeated *local* operations (first-order differential operators) give rise to a *global* transformation. This is "well known", but under different names in different areas: infinitesimal generator and the exponential map (Lie group/Lie algebra), semigroup of unbounded operators (functional analysis), the method of characteristics (linear PDEs), flow of a vector field (differential geometry), and even "observables" or self-adjoint operators in quantum mechanics. The simplest way to understand it is by way of the **exponential** — the master key for solving *any* linear differential equation — of $\frac{d}{dx}$ (in one dimension)
 
 $$
 e^{a\frac{d}{dx}}f(x)=\left(1+a\frac{d}{dx}+\frac{1}{2!}a^2\frac{d^2}{dx^2}+\cdots\right)f(x)=f(x+a)
 $$
 
-which is nothing but the formula for Taylor expansion. We would say that translation (in x-direction) is generated by the operator $\frac{d}{dx}$. One might worry that $a$ has to be within the radius of convergence, but amazingly this "works" even for non-smooth functions. To get a feel for it, recall that the exponential can also be defined by
+which is nothing but the formula for Taylor expansion. We would say that translation (in $x$-direction) is generated by the operator $\frac{d}{dx}$. One might worry that $a$ has to be within the radius of convergence, but amazingly this "works" even for non-smooth functions. To get a feel for it, recall that the exponential can also be defined by
 
 $$
 \displaystyle e^L = \lim_{n\to\infty} (1+\frac{L}{n})^n
