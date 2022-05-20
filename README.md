@@ -1,6 +1,6 @@
 # ConvNets from the PDE perspective
 
-	----*This started as a response to ConvNext, first on Twitter, then on Weights & Biases. If anything could be called the "ConvNets of the 2020s", it'd be, in my opinion, those that are designed from the PDE perspective. Everyone is invited to **open a discussion**, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.*
+---- *This started as a response to ConvNext, first on Twitter, then on Weights & Biases. If anything could be called the "ConvNets of the 2020s", it'd be, in my opinion, those that are designed from the PDE perspective. Everyone is invited to **open a discussion**, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.*
 
 The 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the x- and y-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
@@ -42,7 +42,7 @@ groups (=g) | matrix is block-diagonal (direct sum of g blocks)
 
 The training of a ConvNet would be an **inverse problem**: we know the solutions (dataset), and look for the PDE that would yield those solutions. On the grand scheme of things, it is part of the **continuous formulation** of deep neural nets, which supplements the more traditional "statistical learning" interpretation. If you thought the curse of dimensionality was bad enough, you might find relief in optimization over an *infinite-dimensional* space, aka the *calculus of variations*. (I have very little to say about backpropagation, and will focus on the "feed forward" of ConvNets.)
 
-
+![](/translation.gif)
 
 If you think about it, a full 3x3 conv from (say) 64 channels to 64 channels is rather wasteful, for there can only be at most 9 different kernels (or rather, 9 linearly independent kernels). One way to address this is to take each of the 64 channels, convolve with 9 different kernels, and take linear combinations; in other words, 64 channels go into 64x9 channels (with groups=64), followed by a 1x1 conv. This is awkwardly named "depthwise separable convolution".
 
