@@ -1,6 +1,7 @@
 # ConvNets from the PDE perspective
 
----- *This started as a response to ConvNext, first on Twitter, then on Weights & Biases. If anything could be called the "ConvNets of the 2020s", it'd be, in my opinion, those that are designed from the PDE perspective. Everyone is invited to **open a discussion**, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.*
+* This started out as a response to ConvNext, first posted on Twitter, then expanded on Weights & Biases. In my (biased) opinion, if anything could be called the "ConvNets of the 2020s", it would be those that are designed from the PDE perspective. 
+* Everyone is invited to **open a discussion**, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.
 
 The 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the x- and y-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
@@ -26,6 +27,8 @@ $$
 
 the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a *nonlinear* PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel can "shift" the image in one direction, at a rate of one pixel per layer.
 
+![](/translation.gif)
+
 In fact, with multiple channels this is technically a system of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. The connection may be summarized in the form of a table:
 
 Convolutional Neural Nets | Partial Differential Equations
@@ -41,8 +44,6 @@ multiple channels <br> [e.g. 16×16×3×3 kernel; <br> 16×16×1×1 kernel] | sy
 groups (=g) | matrix is block-diagonal (direct sum of g blocks)
 
 The training of a ConvNet would be an **inverse problem**: we know the solutions (dataset), and look for the PDE that would yield those solutions. On the grand scheme of things, it is part of the **continuous formulation** of deep neural nets, which supplements the more traditional "statistical learning" interpretation. If you thought the curse of dimensionality was bad enough, you might find relief in optimization over an *infinite-dimensional* space, aka the *calculus of variations*. (I have very little to say about backpropagation, and will focus on the "feed forward" of ConvNets.)
-
-![](/translation.gif)
 
 If you think about it, a full 3x3 conv from (say) 64 channels to 64 channels is rather wasteful, for there can only be at most 9 different kernels (or rather, 9 linearly independent kernels). One way to address this is to take each of the 64 channels, convolve with 9 different kernels, and take linear combinations; in other words, 64 channels go into 64x9 channels (with groups=64), followed by a 1x1 conv. This is awkwardly named "depthwise separable convolution".
 
@@ -144,6 +145,10 @@ class Bottleneck(nn.Module):
 ```
 
 One could motivate the addition of variable coefficients as enabling the ConvNet to learn to *rotate* and *scale* the image, just like how the Sobel can shift the image, but by different amounts for different parts of the image. But whether or not it actually *learns* these transformations is not guaranteed, nor easy to verify. At any rate, a better explanation may be that it at least expands the "expressive power" of the network.
+
+![](/rotation.gif)
+
+![](/dilation.gif)
 
 I hope someone with resources can put this to more thorough tests on ImageNet, and share the results. It seems that only with solid results will it convince more people to take this perspective seriously.
 
