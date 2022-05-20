@@ -1,6 +1,6 @@
 # ConvNets from the PDE perspective
 
-----*This started as a response to ConvNext, first on Twitter, then on Weights & Biases. In my opinion, if anything could be called the "ConvNets of the 2020s", it'd be those that are designed from the PDE perspective. Everyone is invited to open a discussion, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.*
+----*This started as a response to ConvNext, first on Twitter, then on Weights & Biases. In my opinion, if anything could be called the "ConvNets of the 2020s", it'd be those that are designed from the PDE perspective. Everyone is invited to **open a discussion**, to ask for clarification, suggest and develop new ideas, a la the Polymath project, and to PR any code that you would like to share.*
 
 The 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the x- and y-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
@@ -18,11 +18,12 @@ $$
 \displaystyle \frac{\partial u}{\partial t} = \sigma (Lu), \quad L= \alpha + \beta \frac{\partial}{\partial x} + \gamma \frac{\partial}{\partial y} + \delta\frac{\partial^2}{\partial x\partial y} +\cdots
 $$
 
-\[Indeed, with $u_n$ the solution at the discrete time $t_n, we'd compute the next time-slice simply by 
+\[Indeed, with $u_n$ the solution at the discrete time $t_n$, we'd compute the next time-slice simply by 
 
 $$
 u_{n+1} = u_n+ \sigma (L u_n) \cdot \Delta t
 $$
+
 the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a nonlinear PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel can "shift" the image in one direction, at a rate of one pixel per layer.
 
 In fact, with multiple channels this is technically a system of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. The connection may be summarized in the form of a table:
@@ -141,3 +142,11 @@ class Bottleneck(nn.Module):
         return out
 
 ```
+One could motivate the addition of variable coefficients as enabling the ConvNet to learn to *rotate* and *scale* the image, just like how the Sobel can shift the image, but by different amounts for different parts of the image. But whether or not it actually *learns* these transformations is not guaranteed, nor easy to verify. At any rate, a better explanation may be that it at least expands the "expressive power" of the network.
+
+I hope someone with resources can put this to more thorough tests on ImageNet, and share the results. It seems that only with solid results will it convince more people to take this perspective seriously.
+
+I'd bet that Yann LeCun did understand PDEs well when he introduced the ConvNet, but purposefully framed it in terms of convolutions. It's a bit unfortunate that, without the guide of PDE, the field had missed many opportunities to improve the architecture design, or did so with ad hoc reasoning. The first to note the connection between ResNet and differential equations or dynamical systems is perhaps Weinan E, an applied mathematician from Princeton. The Neural ODE paper also starts out from the same observation, but it treats each pixel as a dynamical variable (hence ODE), interacting with its immediate neighbors; it's more natural to speak of PDEs, if somewhat limited to ConvNets, so that both the depth (t) and the image dimensions (x, y) are continuous. To this day, the PDE perspective is still not widely adopted among mainstream AI researchers; see, for example, A ConvNet for the 2020s. The mathematics isn't complicated; I recommend 3blue1brown's excellent 2-part introduction, focusing on the heat equation. 
+
+Last but not least, the PDE or dynamical systems perspective also provides a partial answer (though somewhat useless) to the problem of interpretability. The "hypothesis space" is now a class of PDEs that seems to be rich enough for traces of *integrability within chaos* — analogous to the long-term stability and predictability of the solar system, despite the fact that the three-body problem is chaotic — and that gradient descent is somehow quite effective in finding them.
+
