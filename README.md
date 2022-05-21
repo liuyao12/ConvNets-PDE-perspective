@@ -57,7 +57,7 @@ What I'm saying is that the perspective of PDE can get you quite a lot of the de
 
 1. In such PDEs, one always needs to impose a *boundary condition* (BC), which is simply padding in conv. It seems that only "padding with 0" (Dirichlet BC) is ever used. One could instead try to implement the Neumann BC (by using `padding_mode="reflect"`), which could make traveling waves bounce back and thereby retain more information.
 
-1. One special type of PDEs, called **symmetric hyperbolic systems** (Maxwell and Dirac equations are prominent *linear* examples), would be interesting to implement. Or instead, we could help make the ConvNet more "hyperbolic" by putting a suitable regularization term in the loss function.
+1. One important class of PDEs, called **symmetric hyperbolic systems** (Maxwell and Dirac equations are prominent *linear* examples), would be interesting to implement. Or instead, we could help make the ConvNet more "hyperbolic" by putting a suitable regularization term in the loss function.
 
 1. The PDEs here are all "constant coefficients" (i.e., the coefficients are constant in the $x$ and $y$ variables, but do vary in $t$). What if we make them vary in $x$ and $y$ as well? That is, after the standard 3x3 conv, multiply the result by the "coordinate function" of the form $ax+by+c$. Taking the latest torchvision code for ResNet, here are the relevant changes that can be made (easily adaptable to other ConvNets):
 
