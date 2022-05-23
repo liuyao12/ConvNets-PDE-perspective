@@ -45,7 +45,7 @@ groups (=g) | matrix is block-diagonal (direct sum of g blocks)
 
 The training of a ConvNet would be an **inverse problem**: we know the solutions (dataset), and look for the PDE that would yield those solutions. On the grand scheme of things, it is part of the **continuous formulation** of deep neural nets, which supplements the more traditional "statistical learning" interpretation. If you thought the curse of dimensionality was bad enough, you might find relief in optimization over an *infinite*-dimensional space, aka the *calculus of variations*. (I have very little to say about backpropagation, and will focus on the "feed forward" or the "architecture" of ConvNets.)
 
-If you think about it, a full 3x3 conv from (say) 64 channels to 64 channels is rather wasteful, for there can only be at most 9 different kernels (or rather, 9 linearly independent kernels). One way to address this is to take each of the 64 channels, convolve with 9 different kernels, and take linear combinations; in other words, 64 channels go into 64x9 channels (3x3 with groups=64), followed by a 1x1 conv. This is awkwardly named "depthwise separable convolution".
+If you think about it, a full 3x3 conv from (say) 64 channels to 64 channels is rather wasteful, for there can only be at most 9 different kernels (or rather, 9 linearly independent kernels). One way to address this is to take each of the 64 channels, convolve with 9 different kernels, and take linear combinations; in other words, 64 channels go into 64x9 channels (3x3 with `groups=64`), followed by a 1x1 conv. This is awkwardly named "depthwise separable convolution".
 
 In fact, doing x9 is also rather wasteful, for the space of second-order differential operators is 6 or perhaps 5 dimensional, so I'd go with x4. That x1 already works so well (in MobileNet, etc.) is kind of surprising. Now, the
 
@@ -135,7 +135,7 @@ class Bottleneck(nn.Module):
         return out
 ```
 
-One could motivate the addition of variable coefficients as enabling the ConvNet to learn to *rotate* and *scale* the image, just like how the Sobel can shift the image, but by different amounts for different parts of the image. But whether or not it actually *learns* these transformations is not guaranteed, nor easy to verify. At any rate, a better explanation may be that it at least expands the "expressive power" of the network.
+One could motivate the addition of variable coefficients as enabling the ConvNet to *rotate* and *scale* the image, just like how the Sobel can shift the image, but by different amounts for different parts of the image. But whether or not it actually *learns* these transformations is not guaranteed, nor easy to verify. At any rate, a better explanation may be that it at least expands the "expressive power" of the network.
 
 ![](rotation.gif) ![](dilation.gif)
 
