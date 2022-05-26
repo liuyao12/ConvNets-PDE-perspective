@@ -1,7 +1,7 @@
 # ConvNets from the PDE perspective
 
 * This started out as a reaction to [ConvNext: A ConvNet for the 2020s](https://github.com/facebookresearch/ConvNeXt), first on Twitter, then expanded [on Weights & Biases](https://wandb.ai/liuyao12/posts/ConvNets-from-the-PDE-perspective--VmlldzoxNzY2NDE2). In my (very biased) opinion, if anything is to be called the "ConvNets of the 2020s", it would be those that are designed from the PDE perspective. 
-* Everyone is invited to **open a discussion**, to offer criticisms, ask for clarification, suggest and develop new ideas and experiments, a la the Polymath projects (open collaborations of research math that work quite well for iterations of "small" improvements, rather than major conceptual breakthroughs); and of course to PR any code and results that you would like to share. The hope is to get researchers from all over the world to collaborate, to move the field forward, without the inefficient cycle of published papers that repeat many of the same things over. Unlike the Polymath projects, there doesn't appear to be a clearly defined goal.
+* Everyone is invited to **open a discussion**, to offer criticisms, ask for clarification, suggest or develop new ideas and experiments, a la the Polymath projects (open collaborations of research math that work quite well for iterations of "small" improvements, rather than major conceptual breakthroughs); and of course to PR any code and results that you would like to share. The hope is to get researchers from all over the world to collaborate, to move the field forward, without the inefficient cycle of published papers that repeat many of the same things over. Unlike the Polymath projects, there doesn't appear to be a clearly defined goal.
 
 The 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the $x$- and $y$-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
@@ -25,7 +25,7 @@ $$
 u_{n+1} = u_n+ \sigma (L u_n) \cdot \Delta t
 $$
 
-the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a *nonlinear* PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel can "shift" the image in one direction, at a rate of one pixel per layer.
+the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a *nonlinear* PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel "shifts" the image in one direction, at a rate of one pixel per layer.
 
 ![translation](translation.gif)
 
