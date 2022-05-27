@@ -36,7 +36,7 @@ Convolutional Neural Nets | Partial Differential Equations
 input layer | initial condition
 feed forward | solving the equation numerically
 hidden layers | solution at intermediate times
-output (penultimate) layer | solution at final time
+output layer | solution at final time
 **convolution** with 3×3 kernel | **differential operator** of order ≤ 2
 weights | coefficients
 boundary handling <br> (padding) | boundary condition
