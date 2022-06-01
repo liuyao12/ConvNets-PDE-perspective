@@ -168,4 +168,4 @@ $$
  
 respectively. Note that these are differential operators with *variable* coefficients.
 
-IMO, this is the kind of thing that would be hard to come up with, or to justify, without the *continuous formulation* of neural nets, and unfortunately the mathematics is just beyond what the standard CS and ML training would prepare you, but should and can be made more accessible with little or no jargon.
+IMO, this is the kind of thing that would be hard to come up with, or to justify, *without* the continuous formulation of neural nets, and unfortunately the mathematics is just beyond what the standard CS and ML training would prepare you, but should and can be made more accessible with little or no jargon.
