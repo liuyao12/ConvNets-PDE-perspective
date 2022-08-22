@@ -145,7 +145,12 @@ I'd bet that Yann LeCun did understand PDEs well when he introduced the first Co
 
 https://youtu.be/ly4S0oi3Yz8
 
-Last but not least, the PDE or dynamical systems perspective points to a partial answer (though somewhat useless one) to the problem of interpretability. The "hypothesis space" is now a class of PDEs that seems to be rich enough for traces of *integrability within chaos* — analogous to the long-term stability and predictability of the solar system, despite the fact that the three-body problem is chaotic — and that gradient descent is somehow quite effective in finding them.
+Last but not least, the PDE or dynamical systems perspective points to a partial answer (though somewhat useless one) to the problem of interpretability. The "hypothesis space" is now a class of PDEs that seems to be rich enough for traces of *integrability amidst chaos* — analogous to the long-term stability and predictability of the solar system, despite the fact that the three-body problem is chaotic — and that gradient descent is somehow quite effective in finding them. Though it would be nice to "prove" such an *integrability hypothesis*, it's also fine to assume it and see what consequences it would entail.
+
+It should be added that this perspective is getting some exposure in recent years, with several workshops at top venues on it:
+* 2020 ICLR workshop: ![Integration of Deep Neural Models and Differential Equations](https://iclr.cc/virtual_2020/workshops_5.html)
+* 2021 NeurIPS workshop: ![Symbiosis of Deep Learning and Differential Equations (DLDE)](https://dl-de.github.io/)
+
 
 ## Appendix
 One thing that might be hard to find in a PDE course is how repeated *local* operations (first-order differential operators) give rise to a *global* transformation. This is "well known", but under different names in different areas: infinitesimal generator and the exponential map (Lie group/Lie algebra), semigroup of unbounded operators (functional analysis), the method of characteristics (linear PDEs), flow of a vector field (differential geometry), and even "observables" or self-adjoint operators in quantum mechanics. The simplest way to understand it is by way of the **exponential** — the master key for solving *any* linear differential equation — of $\frac{d}{dx}$ (in one dimension)
