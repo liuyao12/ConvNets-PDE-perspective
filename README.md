@@ -145,7 +145,7 @@ I'd bet that Yann LeCun did understand PDEs well when he introduced the first Co
 
 https://youtu.be/ly4S0oi3Yz8
 
-Last but not least, the PDE or dynamical systems perspective points to a partial answer (though somewhat useless one) to the problem of interpretability. The "hypothesis space" is now a class of PDEs that seems to be rich enough for traces of *integrability amidst chaos* — analogous to the long-term stability and predictability of the solar system, despite the fact that the three-body problem is chaotic — and that gradient descent is somehow quite effective in finding them. Though it would be nice to "prove" such an *integrability hypothesis*, it's also fine to assume it and see what consequences it would entail.
+Last but not least, the PDE or dynamical systems perspective points to a partial answer (though somewhat useless one) to the problem of interpretability. The "hypothesis space" is now a class of PDEs that seems to be rich enough for traces of *integrability amidst chaos* — analogous to the long-term stability and predictability of the solar system, despite the fact that the three-body problem is chaotic — and that gradient descent is somehow quite effective in finding them. Though it would be nice to "prove" such a *universal integrability hypothesis*, it's also fine to assume it and see what new ideas it would inspire.
 
 It should be added that this perspective is getting some exposure in recent years, with several workshops at top venues on it:
 * 2020 ICLR workshop: ![Integration of Deep Neural Models and Differential Equations](https://iclr.cc/virtual_2020/workshops_5.html)
