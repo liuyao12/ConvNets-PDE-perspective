@@ -96,7 +96,7 @@ class Bottleneck(nn.Module):
         self.conv2 = conv3x3(width, width * 4, stride, width, dilation)   # Modified
         self.bn2 = norm_layer(width * 4)                                  # Modified
         self.XY = None                                                    # Modified
-        self.mix = conv1x1(6, width * 4)                                  # Modified
+        self.mix = conv1x1(3, width * 4)                                  # Modified
         self.conv3 = conv1x1(width * 4, planes * self.expansion)          # Modified
         self.bn3 = norm_layer(planes * self.expansion)
         self.relu = nn.ReLU(inplace=True)
@@ -112,14 +112,15 @@ class Bottleneck(nn.Module):
         out = self.relu(out)
 
         out = self.conv2(out)
-        if self.XY is None or self.XY.size()[2] != out.size()[2]:            # Added
-            N, C, H, W = out.size()                                          # Added
-            XX = torch.from_numpy(np.indices((1, 1, H, W))[3] * 2 / W - 1)   # Added
-            YY = torch.from_numpy(np.indices((1, 1, H, W))[2] * 2 / H - 1)   # Added
-            ones = torch.from_numpy(np.ones((1, 1, H, W)))                   # Added
-            self.XY = torch.cat([ones, XX, YY, XX*XX, XX*YY, YY*YY],         # Added
-                                dim=1).type(out.dtype).to(out.device)        # Added
-        out = out * self.mix(self.XY)                                        # Added
+        if self.XY is None or self.XY.size()[2] != out.size()[2]:                  # Added
+            N, C, H, W = out.size()                                                # Added
+            XX = torch.from_numpy(np.indices((1, 1, H, W))[3] * 2 / (W - 1) - 1)   # Added
+            YY = torch.from_numpy(np.indices((1, 1, H, W))[2] * 2 / (H - 1) - 1)   # Added
+            ones = torch.from_numpy(np.ones((1, 1, H, W)))                         # Added
+            self.XY = torch.cat([ones, XX, YY,                                     # Added
+	                        # XX*XX, XX*YY, YY*YY               
+                                ], dim=1).type(out.dtype).to(out.device)           # Added
+        out = out * self.mix(self.XY)                                              # Added
         out = self.bn2(out)
 	out = self.relu(out)
 
