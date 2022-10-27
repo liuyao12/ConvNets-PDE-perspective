@@ -114,8 +114,8 @@ class Bottleneck(nn.Module):
         out = self.conv2(out)
         if self.XY is None or self.XY.size()[2] != out.size()[2]:                  # Added
             N, C, H, W = out.size()                                                # Added
-            XX = torch.from_numpy(np.indices((1, 1, H, W))[3] * 2 / (W - 1) - 1)   # Added
-            YY = torch.from_numpy(np.indices((1, 1, H, W))[2] * 2 / (H - 1) - 1)   # Added
+            XX = torch.Tensor(np.indices((1,1,H,W))[3]*2/(W-1)-1)                  # Added
+            YY = torch.Tensor(np.indices((1,1,H,W))[2]*2/(H-1)-1)                  # Added
             self.XY = torch.cat([XX, YY,  XX*XX, XX*YY, YY*YY],                    # Added
                                    dim=1).type(out.dtype).to(out.device)           # Added
         out = out * self.mix(self.XY)                                              # Added
