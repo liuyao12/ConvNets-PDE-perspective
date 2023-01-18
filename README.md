@@ -3,7 +3,7 @@
 * This started out as a reaction to [ConvNext: A ConvNet for the 2020s](https://github.com/facebookresearch/ConvNeXt), first on Twitter, then expanded [on Weights & Biases](https://wandb.ai/liuyao12/posts/ConvNets-from-the-PDE-perspective--VmlldzoxNzY2NDE2). In my (very biased) opinion, if anything is to be called the "ConvNets of the 2020s", it would be those that are designed from the PDE perspective. 
 * Everyone is invited to **open [a discussion](https://github.com/liuyao12/ConvNets-PDE-perspective/discussions)**, to offer criticisms, ask for clarification, suggest or develop new ideas and experiments, à la the Polymath projects (open collaborations of research math that work quite well for iterations of "small" improvements, rather than major conceptual breakthroughs); and of course to PR any code or results that you would like to share. The hope is to allow *anyone* from *anywhere* to contribute, to move the field forward, without the inefficient cycle of published papers that repeat many of the same things over, while sweeping other things under the rug. Unlike the Polymath projects, there doesn't appear to be a clearly defined goal here.
 
-The key obeservation is that the 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the $x$- and $y$-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
+The key observation is that the 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the $x$- and $y$-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
 $$
 \begin{bmatrix} -1 & 0 & 1 \\\\ -2 & 0 & 2 \\\\ -1 & 0 & 1\end{bmatrix} \sim \frac{\partial}{\partial x}
