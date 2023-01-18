@@ -25,11 +25,11 @@ $$
 u_{n+1} = u_n+ \sigma (L u_n) \cdot \Delta t
 $$
 
-the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a *nonlinear* PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel "shifts" the image in one direction, at a rate of one pixel per layer.
+the so-called "forward Euler" method.] With the nonlinear activation $\sigma$, this is a *nonlinear* PDE, which is known for complicated behavior (chaos). But ReLU is rather mild, so perhaps some of the information is being passed down like a linear PDE, which is better understood. For example, compounding Sobel "shifts" the image in one direction, at a rate of one pixel per layer:
 
 ![translation](translation.gif)
 
-In fact, with multiple channels this is technically a *system* of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. The connection may be summarized in the form of a table:
+In fact, with multiple channels this is technically a *system* of PDEs, or a PDE with matrix coefficients. The coefficients $\alpha, \beta,\ldots$ are nothing but the weights that are being updated and optimized for the classification layer. This perspective may be summarized in the form of a dictionary:
 
 Convolutional Neural Nets | Partial Differential Equations
 :----:|:-------:
