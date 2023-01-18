@@ -51,7 +51,7 @@ In fact, doing x9 is also rather wasteful, for the space of second-order differe
 
 	64 --(3x3, groups=64) --> 64x4 --(1x1)--> 64
 
-block is a lot like the Bottleneck block in ResNet. (I don't have a good intuition with the placement of the extra 1x1.)
+block is a lot like the Bottleneck block in ResNet. (I don't have a good intuition with the placement of the other 1x1.)
 
 What I'm saying is that the perspective of PDE can get you quite a lot of the design of the modern ConvNets — consisting almost entirely of 3x3 and 1x1, with skip connections — more naturally and more directly. Moreover, it suggests other ways of tweaking the architecture:
 
