@@ -34,7 +34,7 @@ In fact, with multiple channels this is technically a *system* of PDEs, or a PDE
 
 Convolutional Neural Nets | Partial Differential Equations
 :----:|:-------:
-`x=x+Conv(x) | $\frac{\partial u}{\partial t} = \Delta u$
+`x=x+Conv(x)` | $\frac{\partial u}{\partial t} = \Delta u$
 input layer | initial condition
 feed-forward | solving the equation numerically
 hidden layers | solution at intermediate times
