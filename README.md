@@ -1,7 +1,8 @@
 # ConvNets from the PDE perspective
 
-* This started out as a reaction to [ConvNext: A ConvNet for the 2020s](https://github.com/facebookresearch/ConvNeXt), first on Twitter, then expanded [on Weights & Biases](https://wandb.ai/liuyao12/posts/ConvNets-from-the-PDE-perspective--VmlldzoxNzY2NDE2). In my (very biased) opinion, if anything is to be called the "ConvNets of the 2020s", it would be those that are designed from the PDE perspective. 
-* Everyone is invited to **open [a discussion](https://github.com/liuyao12/ConvNets-PDE-perspective/discussions)**, to offer criticisms, ask for clarification, suggest or develop new ideas and experiments, à la the Polymath projects (open collaborations of research math that work quite well for iterations of "small" improvements, rather than major conceptual breakthroughs); and of course to PR any code or results that you would like to share. The hope is to allow *anyone* from *anywhere* to contribute, to move the field forward, without the inefficient cycle of published papers that repeat many of the same things over, while sweeping other things under the rug. Unlike the Polymath projects, there doesn't appear to be a clearly defined goal here.
+* This version started out as a reaction to [ConvNext: A ConvNet for the 2020s](https://github.com/facebookresearch/ConvNeXt), first on Twitter, then expanded [on Weights & Biases](https://wandb.ai/liuyao12/posts/ConvNets-from-the-PDE-perspective--VmlldzoxNzY2NDE2). In my (very biased) opinion, if anything is to be called the "ConvNets of the 2020s", it would be those that are designed from the PDE perspective.
+* A newer version is now published as the appendix in [A Novel Convolutional Neural Network Architecture with a Continuous Symmetry](https://arxiv.org/abs/2308.01621).
+* Everyone is invited to **open [a discussion](https://github.com/liuyao12/ConvNets-PDE-perspective/discussions)**, to offer criticisms, ask for clarifications, suggest or develop new ideas and experiments, à la the Polymath projects (open collaborations of research math that work quite well for iterations of "small" improvements, rather than major conceptual breakthroughs); and of course to PR any code or results that you would like to share. The hope is to allow *anyone* from *anywhere* to contribute, to move the field forward, without the inefficient cycle of published papers that repeat many of the same things over, while sweeping other things under the rug. Unlike the Polymath projects, there doesn't appear to be a clearly defined goal here.
 
 The key observation is that the 3x3 conv can be seen as a **differential operator** (of order ≤2): the so-called Sobel filters are partial derivatives in the $x$- and $y$-directions of the image, and the Gaussian kernel is (1+) the Laplacian.
 
@@ -33,8 +34,9 @@ In fact, with multiple channels this is technically a *system* of PDEs, or a PDE
 
 Convolutional Neural Nets | Partial Differential Equations
 :----:|:-------:
+`x=x+Conv(x) | $\frac{\partial u}{\partial t} = \Delta u$
 input layer | initial condition
-feed forward | solving the equation numerically
+feed-forward | solving the equation numerically
 hidden layers | solution at intermediate times
 output layer | solution at final time
 **convolution** with 3×3 kernel | **differential operator** of order ≤ 2
