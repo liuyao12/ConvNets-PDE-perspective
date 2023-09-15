@@ -517,7 +517,43 @@ class Bottleneck1(nn.Module): # orignal
 
         return x
 
-class Bottleneck(nn.Module): # quasi-linear hyperbolic system
+class ConvBN(nn.Module):
+    def __init__(self, conv, bn):
+        super(ConvBN, self).__init__()
+        self.conv = conv
+        self.bn = bn
+        self.fused_weight = None
+        self.fused_bias = None
+
+    def forward(self, x):
+        if self.training:
+            x = self.conv(x)
+            x = self.bn(x)
+        else:
+            if self.fused_weight is not None and self.fused_bias is not None:
+                x = F.conv2d(x, self.fused_weight, self.fused_bias, 
+                            self.conv.stride, self.conv.padding, 
+                            self.conv.dilation, self.conv.groups)
+            else:
+                x = self.conv(x)
+                x = self.bn(x)
+        return x
+
+    def fuse_bn(self):
+        if self.training:
+            raise RuntimeError("Call fuse_bn only in eval mode")
+        
+        # Calculate the fused weight and bias
+        w = self.conv.weight
+        mean = self.bn.running_mean
+        var = torch.sqrt(self.bn.running_var + self.bn.eps)
+        gamma = self.bn.weight
+        beta = self.bn.bias
+
+        self.fused_weight = w * (gamma / var).reshape(-1, 1, 1, 1)
+        self.fused_bias = beta - (gamma * mean / var)
+
+class Bottleneck(nn.Module): # new block, based on quasilinear hyperbolic system
     expansion = 1
 
     def __init__(
@@ -540,81 +576,57 @@ class Bottleneck(nn.Module): # quasi-linear hyperbolic system
     ):
         super(Bottleneck, self).__init__()
 
-        width = 4 * inplanes
+        k = 4 if inplanes <= 128 else 2
+        width = k * inplanes
         outplanes = inplanes if downsample is None else inplanes * 2
         first_dilation = first_dilation or dilation
         use_aa = aa_layer is not None and (stride == 2 or first_dilation != dilation)
-        self.conv1 = nn.Conv2d(
-            width, width, kernel_size=3, stride=1 if use_aa else stride,
-            padding=1, dilation=first_dilation, groups=width, bias=False)
-        self.bn1 = norm_layer(width)
 
-        self.conv2 = nn.Conv2d(
-            inplanes, width, kernel_size=1, stride=1, # if use_aa else stride,
-            dilation=first_dilation, groups=1, bias=False)
-        self.bn2 = norm_layer(width)
+        self.conv1 = ConvBN(
+            nn.Conv2d(inplanes, width*2, kernel_size=1, stride=1, # if use_aa else stride,
+                dilation=first_dilation, groups=1, bias=False),
+            norm_layer(width*2))
 
-        self.conv3 = nn.Conv2d(width, outplanes, kernel_size=1, groups=1, bias=False)
-        self.bn3 = norm_layer(outplanes)
-        self.drop_block = drop_block() if drop_block is not None else nn.Identity()
-        self.aa = create_aa(aa_layer, channels=width, stride=stride, enable=use_aa)
+        self.conv2 = nn.Conv2d(width, width*2, kernel_size=3, stride=1 if use_aa else stride,
+                padding=1, dilation=first_dilation, groups=width, bias=False)
+        self.bn2 = norm_layer(width*2)
 
-        self.downsample = nn.Sequential(*[
+        self.conv3 = ConvBN(
+            nn.Conv2d(width*2, outplanes, kernel_size=1, groups=1, bias=False),
+            norm_layer(outplanes))
+
+        self.skip = ConvBN(
             nn.Conv2d(inplanes, outplanes, kernel_size=1, stride=stride,
                 dilation=first_dilation, groups=1, bias=False),
-            norm_layer(outplanes)]) if downsample is not None else None
+            norm_layer(outplanes)) if downsample is not None else nn.Identity()
 
-        self.act3 = softball(radius2=outplanes)
-
-        self.se = create_attn(attn_layer, outplanes)
-
-        self.dilation = dilation
-        self.drop_path = drop_path
-        self.channels = inplanes
+        self.act3 = hardball(radius2=outplanes) if downsample is not None else None
 
     def zero_init_last(self):
-        if getattr(self.bn3, 'weight', None) is not None:
-            nn.init.zeros_(self.bn3.weight)
+        if getattr(self.conv3.bn, 'weight', None) is not None:
+            nn.init.zeros_(self.conv3.bn.weight)
 
     def conv_forward(self, x):
-        kernel = self.conv1.weight.repeat(self.channels,1,1,1)
-        bias = self.conv1.bias.repeat(self.channels) if self.conv1.bias is not None else None
-        return F.conv2d(x, kernel, bias, self.conv1.stride,
-            self.conv1.padding, self.conv1.dilation, self.channels)
+        conv = self.conv2
+        k = conv.in_channels
+        C = x.size()[1] // k
+        kernel = conv.weight.repeat(C, 1, 1, 1)
+        bias = conv.bias.repeat(C) if conv.bias is not None else None
+        return F.conv2d(x, kernel, bias, conv.stride, 
+            conv.padding, conv.dilation, C * k)
 
     def forward(self, x):
-        x0 = x
-
+        x0 = self.skip(x)
+        x = self.conv1(x)
+        N, C, H, W = x.size()
+        x = x[:,:C//2,:,:] * x[:,C//2:,:,:]
         x = self.conv2(x)
         x = self.bn2(x)
-
-        N, _, H, W = x.size()
-        x = (x.view(N,4,-1,H,W) * x0.view(N,1,-1,H,W)).view(N,-1,H,W)
-
-        x = self.conv1(x)
-        x = self.bn1(x)
-
-        x = self.drop_block(x)
-        x = self.aa(x)
-
         x = self.conv3(x)
-        x = self.bn3(x)
-
-        if self.se is not None:
-            x = self.se(x)
-
-        if self.drop_path is not None:
-            x = self.drop_path(x)
-
-        if self.downsample is not None:
-            x0 = self.downsample(x0)
         x += x0
-
-        x = self.act3(x)
-
+        if self.act3 is not None:
+            x = self.act3(x)
         return x
-
-
 
 def downsample_conv(
         in_channels,
