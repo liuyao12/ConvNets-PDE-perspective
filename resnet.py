@@ -335,22 +335,27 @@ def create_aa(aa_layer, channels, stride=2, enable=True):
 
 
 class softball(nn.Module):
-    def __init__(self, radius2=1):
+    def __init__(self, radius2=None, inplace=True):
         super(softball, self).__init__()
-        self.radius2 = radius2
+        self.radius2 = radius2 if radius2 is not None else None
 
     def forward(self, x):
+        if self.radius2 is None:
+            self.radius2 = x.size()[1]
         norm = torch.sqrt(1 + (x*x).sum(1, keepdim=True) / self.radius2)
         return x / norm
 
 class hardball(nn.Module):
-    def __init__(self, radius2=1):
+    def __init__(self, radius2=None):
         super(hardball, self).__init__()
-        self.radius = np.sqrt(radius2)
+        self.radius = np.sqrt(radius2) if radius2 is not None else None
 
     def forward(self, x):
         norm = torch.sqrt((x*x).sum(1, keepdim=True))
+        if self.radius is None:
+            self.radius = np.sqrt(x.size()[1])
         return torch.where(norm > self.radius, self.radius * x / norm, x)
+
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -431,7 +436,7 @@ class BasicBlock(nn.Module):
 
         return x
 
-class Bottleneck1(nn.Module): # orignal
+class Bottleneck(nn.Module): # original
     expansion = 4
 
     def __init__(
@@ -459,7 +464,6 @@ class Bottleneck1(nn.Module): # orignal
         outplanes = planes * self.expansion
         first_dilation = first_dilation or dilation
         use_aa = aa_layer is not None and (stride == 2 or first_dilation != dilation)
-        self.first_planes = first_planes
 
         self.conv1 = nn.Conv2d(inplanes, first_planes, kernel_size=1, bias=False)
         self.bn1 = norm_layer(first_planes)
@@ -473,7 +477,7 @@ class Bottleneck1(nn.Module): # orignal
         self.act2 = act_layer(inplace=True)
         self.aa = create_aa(aa_layer, channels=width, stride=stride, enable=use_aa)
 
-        self.conv3 = nn.Conv2d(width, outplanes, kernel_size=1, groups=1, bias=False)
+        self.conv3 = nn.Conv2d(width, outplanes, kernel_size=1, bias=False)
         self.bn3 = norm_layer(outplanes)
 
         self.se = create_attn(attn_layer, outplanes)
@@ -517,6 +521,96 @@ class Bottleneck1(nn.Module): # orignal
 
         return x
 
+
+class Bottleneck1(nn.Module): # original
+    expansion = 4
+
+    def __init__(
+            self,
+            inplanes,
+            planes,
+            stride=1,
+            downsample=None,
+            cardinality=1,
+            base_width=64,
+            reduce_first=1,
+            dilation=1,
+            first_dilation=None,
+            act_layer=nn.ReLU,
+            norm_layer=nn.BatchNorm2d,
+            attn_layer=None,
+            aa_layer=None,
+            drop_block=None,
+            drop_path=None,
+    ):
+        super(Bottleneck1, self).__init__()
+
+        # k = 4 if planes <= 256 else 2
+        width = int(math.floor(planes * (base_width / 64)) * cardinality)
+        first_planes = width // reduce_first
+        outplanes = planes * self.expansion
+        first_dilation = first_dilation or dilation
+        use_aa = aa_layer is not None and (stride == 2 or first_dilation != dilation)
+
+        self.conv1 = nn.Conv2d(inplanes, first_planes*2, kernel_size=1, bias=False)
+        self.bn1 = norm_layer(first_planes)
+        # self.act1 = act_layer(inplace=True)
+
+        self.conv2 = nn.Conv2d(
+            first_planes, width, kernel_size=3, stride=1 if use_aa else stride,
+            padding=first_dilation, dilation=first_dilation, groups=first_planes, bias=False)
+        self.bn2 = norm_layer(width)
+        self.drop_block = drop_block() if drop_block is not None else nn.Identity()
+        # self.act2 = act_layer(inplace=True)
+        self.aa = create_aa(aa_layer, channels=width, stride=stride, enable=use_aa)
+
+        self.conv3 = nn.Conv2d(width, outplanes, kernel_size=1, bias=False)
+        self.bn3 = norm_layer(outplanes)
+
+        self.se = create_attn(attn_layer, outplanes)
+
+        self.act3 = hardball(radius2=outplanes) if downsample is not None else None
+        self.downsample = downsample
+        self.stride = stride
+        self.dilation = dilation
+        self.drop_path = drop_path
+
+    def zero_init_last(self):
+        if getattr(self.bn3, 'weight', None) is not None:
+            nn.init.zeros_(self.bn3.weight)
+
+    def forward(self, x):
+        shortcut = x
+
+        x = self.conv1(x)
+        C = x.size()[1]
+        x = x[:, :C//2, :, :] * x[:, C//2:, :, :]
+        x = self.bn1(x)
+        # x = self.act1(x)
+
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = self.drop_block(x)
+        # x = self.act2(x)
+        x = self.aa(x)
+
+        x = self.conv3(x)
+        x = self.bn3(x)
+
+        if self.se is not None:
+            x = self.se(x)
+
+        if self.drop_path is not None:
+            x = self.drop_path(x)
+
+        if self.downsample is not None:
+            shortcut = self.downsample(shortcut)
+        x += shortcut
+        if self.act3 is not None:
+            x = self.act3(x)
+
+        return x
+
 class ConvBN(nn.Module):
     def __init__(self, conv, bn):
         super(ConvBN, self).__init__()
@@ -553,7 +647,8 @@ class ConvBN(nn.Module):
         self.fused_weight = w * (gamma / var).reshape(-1, 1, 1, 1)
         self.fused_bias = beta - (gamma * mean / var)
 
-class Bottleneck(nn.Module): # new block, based on quasilinear hyperbolic system
+
+class PDEBlock(nn.Module): # quasilinear hyperbolic system
     expansion = 1
 
     def __init__(
@@ -574,20 +669,20 @@ class Bottleneck(nn.Module): # new block, based on quasilinear hyperbolic system
             drop_block=None,
             drop_path=None,
     ):
-        super(Bottleneck, self).__init__()
+        super(PDEBlock, self).__init__()
 
         k = 4 if inplanes <= 128 else 2
-        width = k * inplanes
+        width = inplanes * k
         outplanes = inplanes if downsample is None else inplanes * 2
         first_dilation = first_dilation or dilation
         use_aa = aa_layer is not None and (stride == 2 or first_dilation != dilation)
 
         self.conv1 = ConvBN(
-            nn.Conv2d(inplanes, width*2, kernel_size=1, stride=1, # if use_aa else stride,
+            nn.Conv2d(inplanes, width*2, kernel_size=1, stride=1,
                 dilation=first_dilation, groups=1, bias=False),
             norm_layer(width*2))
 
-        self.conv2 = nn.Conv2d(width, width*2, kernel_size=3, stride=1 if use_aa else stride,
+        self.conv2 = nn.Conv2d(width, width*2, kernel_size=3, stride=stride,
                 padding=1, dilation=first_dilation, groups=width, bias=False)
         self.bn2 = norm_layer(width*2)
 
@@ -618,8 +713,8 @@ class Bottleneck(nn.Module): # new block, based on quasilinear hyperbolic system
     def forward(self, x):
         x0 = self.skip(x)
         x = self.conv1(x)
-        N, C, H, W = x.size()
-        x = x[:,:C//2,:,:] * x[:,C//2:,:,:]
+        C = x.size()[1]
+        x = x[:, :C//2, :, :] * x[:, C//2:, :, :]
         x = self.conv2(x)
         x = self.bn2(x)
         x = self.conv3(x)
@@ -627,6 +722,7 @@ class Bottleneck(nn.Module): # new block, based on quasilinear hyperbolic system
         if self.act3 is not None:
             x = self.act3(x)
         return x
+
 
 def downsample_conv(
         in_channels,
@@ -835,7 +931,6 @@ class ResNet(nn.Module):
         self.grad_checkpointing = False
         
         act_layer = get_act_layer(act_layer)
-        # act_layer = cone
         norm_layer = get_norm_layer(norm_layer)
 
         # Stem
@@ -880,7 +975,6 @@ class ResNet(nn.Module):
 
         # Feature Blocks
         channels = [64, 128, 256, 512]
-        # channels = [32, 32, 32, 32]
         stage_modules, stage_feature_info = make_blocks(
             block,
             channels,
@@ -903,7 +997,8 @@ class ResNet(nn.Module):
             self.add_module(*stage)  # layer1, layer2, etc
         self.feature_info.extend(stage_feature_info)
 
-        self.act = nn.Hardtanh(max_val=1, min_val=0, inplace=True)
+        # self.act = nn.Hardtanh(max_val=5, min_val=-5, inplace=True)
+        self.act = hardball(radius2=512)
         # self.act = nn.ReLU(inplace=True)
 
         # Head (Pooling and Classifier)
@@ -921,7 +1016,8 @@ class ResNet(nn.Module):
     def init_weights(self, zero_init_last=True):
         for n, m in self.named_modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='linear')
+                # nn.init.xavier_normal_(m.weight)
         if zero_init_last:
             for m in self.modules():
                 if hasattr(m, 'zero_init_last'):
@@ -1053,7 +1149,7 @@ def resnet26d(pretrained=False, **kwargs):
 def resnet50(pretrained=False, **kwargs):
     """Constructs a ResNet-50 model.
     """
-    model_args = dict(block=Bottleneck, layers=[3, 4, 6, 3],  **kwargs)
+    model_args = dict(block=PDEBlock, layers=[3, 4, 6, 3],  **kwargs)
     return _create_resnet('resnet50', pretrained, **dict(model_args, **kwargs))
 
 
