@@ -10,10 +10,11 @@ Copyright 2019, Ross Wightman
 import math 
 from functools import partial
 
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
+from .radial_activations import hardball, softball
 
 from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from timm.layers import DropBlock2d, DropPath, AvgPool2dSame, BlurPool2d, GroupNorm, create_attn, get_attn, \
@@ -332,29 +333,6 @@ def create_aa(aa_layer, channels, stride=2, enable=True):
     if not aa_layer or not enable:
         return nn.Identity()
     return aa_layer(stride) if issubclass(aa_layer, nn.AvgPool2d) else aa_layer(channels=channels, stride=stride)
-
-
-class softball(nn.Module):
-    def __init__(self, radius2=None, inplace=True):
-        super(softball, self).__init__()
-        self.radius2 = radius2 if radius2 is not None else None
-
-    def forward(self, x):
-        if self.radius2 is None:
-            self.radius2 = x.size()[1]
-        norm = torch.sqrt(1 + (x*x).sum(1, keepdim=True) / self.radius2)
-        return x / norm
-
-class hardball(nn.Module):
-    def __init__(self, radius2=None):
-        super(hardball, self).__init__()
-        self.radius = np.sqrt(radius2) if radius2 is not None else None
-
-    def forward(self, x):
-        norm = torch.sqrt((x*x).sum(1, keepdim=True))
-        if self.radius is None:
-            self.radius = np.sqrt(x.size()[1])
-        return torch.where(norm > self.radius, self.radius * x / norm, x)
 
 
 class BasicBlock(nn.Module):
