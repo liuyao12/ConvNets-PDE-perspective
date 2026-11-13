@@ -1,0 +1,72 @@
+[
+  {
+    "seed": 0,
+    "model": "stem_only",
+    "readout": "mean",
+    "test_accuracy": 0.3185185194015503,
+    "seconds": 0.11281573699989167
+  },
+  {
+    "seed": 0,
+    "model": "symmetric_flux",
+    "readout": "mean",
+    "test_accuracy": 0.3185185194015503,
+    "seconds": 1.4876012329996229
+  },
+  {
+    "seed": 0,
+    "model": "stem_only",
+    "readout": "flatten",
+    "test_accuracy": 0.9722222089767456,
+    "seconds": 0.11648587699983182
+  },
+  {
+    "seed": 0,
+    "model": "symmetric_flux",
+    "readout": "flatten",
+    "test_accuracy": 0.9759259223937988,
+    "seconds": 1.4310550469999725
+  },
+  {
+    "seed": 0,
+    "model": "symmetric_flux",
+    "readout": "radial_mean",
+    "test_accuracy": 0.6296296119689941,
+    "seconds": 1.4099953690001712
+  },
+  {
+    "seed": 1,
+    "model": "stem_only",
+    "readout": "mean",
+    "test_accuracy": 0.23888888955116272,
+    "seconds": 0.09629282700007025
+  },
+  {
+    "seed": 1,
+    "model": "symmetric_flux",
+    "readout": "mean",
+    "test_accuracy": 0.24074074625968933,
+    "seconds": 1.4225159789998543
+  },
+  {
+    "seed": 1,
+    "model": "stem_only",
+    "readout": "flatten",
+    "test_accuracy": 0.9759259223937988,
+    "seconds": 0.10938720700005433
+  },
+  {
+    "seed": 1,
+    "model": "symmetric_flux",
+    "readout": "flatten",
+    "test_accuracy": 0.970370352268219,
+    "seconds": 1.5334408119997534
+  },
+  {
+    "seed": 1,
+    "model": "symmetric_flux",
+    "readout": "radial_mean",
+    "test_accuracy": 0.6240741014480591,
+    "seconds": 1.3228747890002523
+  }
+]

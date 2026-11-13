@@ -1,0 +1,69 @@
+{
+  "project": "QLNet PDE-CNN continuation",
+  "date": "2026-11-13",
+  "tasks": [
+    {
+      "id": "A1",
+      "priority": 1,
+      "title": "Replicate historical NaN and isolate first nonfinite",
+      "prerequisites": "checkpoint logs optimizer dataset",
+      "acceptance_criteria": "first nonfinite operation or blocker documented",
+      "status": "open",
+      "claim_policy": "Distinguish proved mathematics, measured results, and hypotheses; never mislabel obfuscation as encryption."
+    },
+    {
+      "id": "A2",
+      "priority": 1,
+      "title": "Review radial activations PR #10",
+      "prerequisites": "torch gradcheck timm install tests",
+      "acceptance_criteria": "finite gradients & source equivalence",
+      "status": "open",
+      "claim_policy": "Distinguish proved mathematics, measured results, and hypotheses; never mislabel obfuscation as encryption."
+    },
+    {
+      "id": "A3",
+      "priority": 2,
+      "title": "Implement full block gauge transform",
+      "prerequisites": "unmodified network weights and BN fusion",
+      "acceptance_criteria": "model output errors and compute overhead",
+      "status": "open",
+      "claim_policy": "Distinguish proved mathematics, measured results, and hypotheses; never mislabel obfuscation as encryption."
+    },
+    {
+      "id": "A4",
+      "priority": 2,
+      "title": "Entropy-stable low-rank flux classification",
+      "prerequisites": "proved semidiscrete identity and spatial readout",
+      "acceptance_criteria": "nonzero gradients plus multi-seed benchmark",
+      "status": "open",
+      "claim_policy": "Distinguish proved mathematics, measured results, and hypotheses; never mislabel obfuscation as encryption."
+    },
+    {
+      "id": "A5",
+      "priority": 1,
+      "title": "Threat-model privacy attacks",
+      "prerequisites": "known-weight and calibration anchor experiments",
+      "acceptance_criteria": "quantified reconstruction and leakage",
+      "status": "open",
+      "claim_policy": "Distinguish proved mathematics, measured results, and hypotheses; never mislabel obfuscation as encryption."
+    },
+    {
+      "id": "A6",
+      "priority": 3,
+      "title": "Real CKKS ciphertext inference",
+      "prerequisites": "TenSEAL/OpenFHE and HE parameters",
+      "acceptance_criteria": "runtime genuine ciphertext output and end-to-end errors",
+      "status": "open",
+      "claim_policy": "Distinguish proved mathematics, measured results, and hypotheses; never mislabel obfuscation as encryption."
+    },
+    {
+      "id": "A7",
+      "priority": 3,
+      "title": "Formalize four short mathematical lemmas",
+      "prerequisites": "definitions from research packet",
+      "acceptance_criteria": "complete proof artifacts",
+      "status": "open",
+      "claim_policy": "Distinguish proved mathematics, measured results, and hypotheses; never mislabel obfuscation as encryption."
+    }
+  ]
+}

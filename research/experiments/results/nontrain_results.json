@@ -1,0 +1,382 @@
+{
+  "environment": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "cpu_only": true,
+    "threads": 2
+  },
+  "date_context": "2026-11-13",
+  "activation": {
+    "torch.float32:0.0": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": false,
+        "nan_grads": 144
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 0.0
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.0
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.0
+      }
+    },
+    "torch.float32:1e-20": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "nan_grads": 0
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 9.999999682655225e-21
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 9.999999682655225e-21
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 9.999998874861658e-21
+      }
+    },
+    "torch.float32:1.0": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "nan_grads": 0
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 0.7071067690849304
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.9999999403953552
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.7071067690849304
+      }
+    },
+    "torch.float32:10000.0": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "nan_grads": 0
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 1.0
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.9999999403953552
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.9999999403953552
+      }
+    },
+    "torch.float16:0.0": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": false,
+        "nan_grads": 144
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 0.0
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.0
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.0
+      }
+    },
+    "torch.float16:1.0": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "nan_grads": 0
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 0.70703125
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 1.0
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.70703125
+      }
+    },
+    "torch.float16:10000.0": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "nan_grads": 0
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 0.0
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 1.0
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 1.0
+      }
+    },
+    "torch.bfloat16:0.0": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": false,
+        "nan_grads": 144
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 0.0
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.0
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.0
+      }
+    },
+    "torch.bfloat16:1.0": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "nan_grads": 0
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 0.70703125
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 1.0
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 0.70703125
+      }
+    },
+    "torch.bfloat16:10000.0": {
+      "old_hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "nan_grads": 0
+      },
+      "old_softball": {
+        "forward_finite": true,
+        "max_output": 1.0
+      },
+      "hardball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 1.0
+      },
+      "softball": {
+        "forward_finite": true,
+        "grad_finite": true,
+        "max_output": 1.0
+      }
+    }
+  },
+  "gauge": {
+    "max_equivariance_error_fp64": 9.992007221626409e-16,
+    "known_public_weights_key_recovery_error_fp64": 5.585809592645319e-16,
+    "extra_dense_skip_parameters_per_block": 36,
+    "extra_parameters_fraction_vs_block": 0.07142857142857142
+  },
+  "entropy": {
+    "semidiscrete_energy_derivative": -18.461655837363917,
+    "exact_dissipation_formula": -18.461655837363917,
+    "entropy_identity_error": 0.0,
+    "orthogonal_flux_equivariance_error": 2.220446049250313e-16,
+    "forward_euler_energy_initial": 8.836458028739004,
+    "forward_euler_energy_after_dt_0p02": 8.47317024114762,
+    "energy_decreased": true,
+    "principal_matrix_symmetric_error": 1.3877787807814457e-17,
+    "principal_matrix_eigenvalues": [
+      -0.5771501805107995,
+      -0.12911400341526236,
+      -0.02187439891162236,
+      0.007629649948095566
+    ]
+  },
+  "dynamical": {
+    "unscaled": {
+      "final": null,
+      "peak": null,
+      "first_step_over_1e6": 8,
+      "finite": false
+    },
+    "scaled": {
+      "final": null,
+      "peak": null,
+      "first_step_over_1e6": 58,
+      "finite": false
+    },
+    "clipped": {
+      "final": 0.8392867552141611,
+      "peak": 0.8392867552141611,
+      "first_step_over_1e6": null,
+      "finite": true
+    }
+  },
+  "polynomial": {
+    "domain_0_1_degree_3": {
+      "max_abs_error_on_20001_point_grid": 0.0008662664607477222,
+      "abs_error_at_4_times_range": 2.3774545069547575,
+      "horner_multiplicative_depth_per_activation": 5,
+      "poly_coefficients_low_to_high": [
+        0.9991337335392523,
+        -0.48080161893960705,
+        0.271844610703407,
+        -0.08368253032015836
+      ]
+    },
+    "domain_0_1_degree_5": {
+      "max_abs_error_on_20001_point_grid": 2.5488656340444393e-05,
+      "abs_error_at_4_times_range": 10.902266561557099,
+      "horner_multiplicative_depth_per_activation": 7,
+      "poly_coefficients_low_to_high": [
+        0.9999745113436596,
+        -0.4988527818226812,
+        0.3623175578197267,
+        -0.25316070081287395,
+        0.12784899223633742,
+        -0.03103882269111733
+      ]
+    },
+    "domain_0_1_degree_7": {
+      "max_abs_error_on_20001_point_grid": 7.498173731912416e-07,
+      "abs_error_at_4_times_range": 53.44650932799087,
+      "horner_multiplicative_depth_per_activation": 9,
+      "poly_coefficients_low_to_high": [
+        0.9999992501826268,
+        -0.4999431017169805,
+        0.37393305024242623,
+        -0.3038895220408288,
+        0.23629308491558473,
+        -0.14992252734730516,
+        0.06307978360257614,
+        -0.012443766927488555
+      ]
+    },
+    "domain_0_4_degree_3": {
+      "max_abs_error_on_20001_point_grid": 0.021278674377262607,
+      "abs_error_at_4_times_range": 23.8682899598508,
+      "horner_multiplicative_depth_per_activation": 5,
+      "poly_coefficients_low_to_high": [
+        0.9787213256227374,
+        -0.35662685942572403,
+        0.09839750916444877,
+        -0.01076372271868274
+      ]
+    },
+    "domain_0_4_degree_5": {
+      "max_abs_error_on_20001_point_grid": 0.0031030340208624274,
+      "abs_error_at_4_times_range": 538.2075419806716,
+      "horner_multiplicative_depth_per_activation": 7,
+      "poly_coefficients_low_to_high": [
+        0.9968969659791376,
+        -0.4600904464996056,
+        0.23835831714447409,
+        -0.08351616685864025,
+        0.015964884953529768,
+        -0.0012367369329720902
+      ]
+    },
+    "domain_0_4_degree_7": {
+      "max_abs_error_on_20001_point_grid": 0.0004524198096101939,
+      "abs_error_at_4_times_range": 13029.59267316948,
+      "horner_multiplicative_depth_per_activation": 9,
+      "poly_coefficients_low_to_high": [
+        0.9995475801903898,
+        -0.49050251260161326,
+        0.3233819703564039,
+        -0.1820182585627269,
+        0.07266496801794789,
+        -0.018342313060038907,
+        0.0025833196568234504,
+        -0.00015359191077431698
+      ]
+    },
+    "domain_0_16_degree_3": {
+      "max_abs_error_on_20001_point_grid": 0.13805439395108832,
+      "abs_error_at_4_times_range": 65.73286147441968,
+      "horner_multiplicative_depth_per_activation": 5,
+      "poly_coefficients_low_to_high": [
+        0.8619456060489117,
+        -0.15050662153547853,
+        0.01376718257555724,
+        -0.00043193332060657965
+      ]
+    },
+    "domain_0_16_degree_5": {
+      "max_abs_error_on_20001_point_grid": 0.05127964500369986,
+      "abs_error_at_4_times_range": 3762.4402575912,
+      "horner_multiplicative_depth_per_activation": 7,
+      "poly_coefficients_low_to_high": [
+        0.9487203549963001,
+        -0.27955024185974153,
+        0.059695270356336524,
+        -0.006770199754217235,
+        0.000373659774055766,
+        -7.901423657860046e-06
+      ]
+    },
+    "domain_0_16_degree_7": {
+      "max_abs_error_on_20001_point_grid": 0.019043767347370455,
+      "abs_error_at_4_times_range": 231671.35531585425,
+      "horner_multiplicative_depth_per_activation": 9,
+      "poly_coefficients_low_to_high": [
+        0.9809562326526295,
+        -0.374905646414473,
+        0.1286570929257806,
+        -0.027520140976100248,
+        0.0034906014854299543,
+        -0.00025471164325525356,
+        9.85291059640964e-06,
+        -1.562320560589053e-07
+      ]
+    }
+  }
+}
