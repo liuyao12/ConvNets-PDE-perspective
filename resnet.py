@@ -1016,7 +1016,7 @@ class ResNet(nn.Module):
 
     def reset_classifier(self, num_classes, global_pool='avg'):
         self.num_classes = num_classes
-        self.global_pool, self.fc = create_classifier(self.num_features, 99, # self.num_classes, 
+        self.global_pool, self.fc = create_classifier(self.num_features, self.num_classes, 
             pool_type=global_pool)
 
     def forward_features(self, x):
